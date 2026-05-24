@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dress the Legionary!</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(160deg, #6B1111 0%, #2A0A0A 100%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: #F5DEB3;
+        }
+
+        header {
+            text-align: center;
+            padding: 18px 20px 14px;
+            background: rgba(0,0,0,0.35);
+            border-bottom: 3px solid #DAA520;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            color: #FFD700;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            margin-top: 6px;
+            font-size: 1em;
+            color: #F5DEB3;
+        }
+
+        /* ── Layout ── */
+        .game-container {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            flex: 1;
+            min-height: 0;
+            align-items: stretch;
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        /* ── Soldier panel ── */
+        .soldier-panel {
+            flex: 1;
+            min-width: 0;
+            min-height: 0;
+            background: rgba(0,0,0,0.25);
+            border: 2px solid #DAA520;
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .panel-title {
+            text-align: center;
+            color: #FFD700;
+            font-size: 1.15em;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+            width: 100%;
+        }
+
+        /* Wrapper scales with panel height, preserves SVG aspect ratio */
+        .soldier-wrapper {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            aspect-ratio: 1920 / 2426;
+            max-width: 100%;
+        }
+
+        .soldier-img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .drop-zone.overlay-dz {
+            position: absolute;
+        }
+
+        /* ── Drop zones: pulsing circles ── */
+        .drop-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: default;
+        }
+
+        .drop-zone.overlay-dz {
+            position: absolute;
+            width: 14%;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(218,165,32,0.18);
+            border: 2px solid rgba(218,165,32,0.65);
+            animation: zone-pulse 2s ease-out infinite;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        /* Staggered pulse delay per circle */
+        .drop-zone.overlay-dz:nth-child(2) { animation-delay: 0s;     }
+        .drop-zone.overlay-dz:nth-child(3) { animation-delay: 0.33s;  }
+        .drop-zone.overlay-dz:nth-child(4) { animation-delay: 0.66s;  }
+        .drop-zone.overlay-dz:nth-child(5) { animation-delay: 1s;     }
+        .drop-zone.overlay-dz:nth-child(6) { animation-delay: 1.33s;  }
+        .drop-zone.overlay-dz:nth-child(7) { animation-delay: 1.66s;  }
+
+        .drop-zone.overlay-dz.drag-over {
+            background: rgba(218,165,32,0.42);
+            border-color: #FFD700;
+            transform: translate(-50%, -50%) scale(1.18);
+            animation: zone-pulse-fast 0.5s ease-out infinite;
+        }
+
+        .drop-zone.overlay-dz.correct {
+            animation: zone-correct 0.4s ease forwards;
+            background: rgba(34,139,34,0.38);
+            border: 2px solid #4CAF50;
+            box-shadow: 0 0 16px rgba(76,175,80,0.55);
+        }
+
+        .drop-zone.overlay-dz.wrong {
+            background: rgba(200,0,0,0.35);
+            border-color: #FF4444;
+            animation: zone-wrong 0.45s ease !important;
+        }
+
+        .zone-label {
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.65em;
+            color: #FFD700;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 7px;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .zone-placeholder {
+            font-size: 1.1em;
+            color: rgba(218,165,32,0.8);
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        /* ── Items panel ── */
+        .items-panel {
+            width: 230px;
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.25);
+            border: 2px solid #DAA520;
+            border-radius: 14px;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-card {
+            background: linear-gradient(135deg, #5C2D1E, #3A1208);
+            border: 2px solid #DAA520;
+            border-radius: 10px;
+            padding: 11px 13px;
+            margin-bottom: 10px;
+            cursor: grab;
+            transition: transform 0.18s, box-shadow 0.18s;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .item-card:last-child { margin-bottom: 0; }
+        .item-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(218,165,32,0.35); }
+        .item-card:active { cursor: grabbing; }
+        .item-card.dragging { opacity: 0.45; }
+        .item-card.placed { opacity: 0.25; cursor: not-allowed; pointer-events: none; }
+
+        .item-top   { display: flex; align-items: center; gap: 8px; }
+        .item-icon  { font-size: 1.6em; }
+        .item-name  { font-weight: bold; color: #FFD700; font-size: 1em; }
+        .item-latin { font-style: italic; color: #DAA520; font-size: 0.8em; }
+        .item-desc  { color: #E8D5B0; font-size: 0.78em; margin-top: 5px; line-height: 1.35; }
+
+        /* ── Scoreboard panel ── */
+        .scoreboard-panel {
+            width: 190px;
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.25);
+            border: 2px solid #DAA520;
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .sb-title {
+            text-align: center;
+            color: #FFD700;
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .sb-empty {
+            text-align: center;
+            color: #9A7A3A;
+            font-size: 0.88em;
+            padding: 10px 0;
+        }
+
+        .sb-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+        }
+
+        .sb-table th {
+            color: #DAA520;
+            text-align: left;
+            padding: 4px 6px;
+            border-bottom: 1px solid #4A3010;
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        .sb-table td {
+            padding: 5px 6px;
+            border-bottom: 1px solid rgba(74,48,16,0.4);
+            color: #E8D5B0;
+        }
+
+        .sb-table tr.sb-new td {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .sb-rank { width: 24px; text-align: center; color: #DAA520; }
+        .sb-time { width: 52px; text-align: right; font-variant-numeric: tabular-nums; }
+
+        .sb-medal-1 { color: #FFD700; }
+        .sb-medal-2 { color: #C0C0C0; }
+        .sb-medal-3 { color: #CD7F32; }
+
+        /* ── Score bar ── */
+        .score-bar {
+            text-align: center;
+            padding: 14px 20px;
+            background: rgba(0,0,0,0.35);
+            border-top: 2px solid #DAA520;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .score-bar-left  { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+        .score-bar-right { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+
+        #feedback {
+            font-size: 1.05em;
+            min-height: 1.5em;
+            flex: 1;
+            text-align: center;
+        }
+
+        .score-line { font-size: 1.2em; color: #FFD700; }
+        .timer-line { font-size: 1.2em; color: #FFD700; font-variant-numeric: tabular-nums; }
+
+        .btn {
+            background: linear-gradient(135deg, #DAA520, #A07010);
+            color: #1A0000;
+            border: none;
+            padding: 9px 24px;
+            border-radius: 22px;
+            font-size: 1em;
+            font-family: Georgia, serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.18s, box-shadow 0.18s;
+        }
+
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(218,165,32,0.45); }
+
+        /* ── Victory modal ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: linear-gradient(160deg, #5A1010, #200808);
+            border: 3px solid #DAA520;
+            border-radius: 18px;
+            padding: 32px 36px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.8);
+            animation: popIn 0.35s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+
+        .modal h2 { color: #FFD700; font-size: 1.8em; margin-bottom: 8px; }
+        .modal .modal-time { font-size: 2.2em; color: #FFD700; margin: 12px 0; font-variant-numeric: tabular-nums; }
+        .modal p { color: #E8D5B0; margin-bottom: 16px; }
+
+        .modal input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 2px solid #DAA520;
+            background: rgba(0,0,0,0.4);
+            color: #FFD700;
+            font-size: 1.1em;
+            font-family: Georgia, serif;
+            text-align: center;
+            margin-bottom: 16px;
+            outline: none;
+        }
+
+        .modal input[type="text"]::placeholder { color: #9A7A3A; }
+        .modal input[type="text"]:focus { border-color: #FFD700; }
+
+        .modal-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+        .btn-secondary {
+            background: transparent;
+            color: #DAA520;
+            border: 2px solid #DAA520;
+            padding: 8px 20px;
+            border-radius: 22px;
+            font-size: 0.95em;
+            font-family: Georgia, serif;
+            cursor: pointer;
+            transition: background 0.18s;
+        }
+
+        .btn-secondary:hover { background: rgba(218,165,32,0.15); }
+
+        /* ── Animations ── */
+        @keyframes zone-pulse {
+            0%   { box-shadow: 0 0 0 0   rgba(218,165,32,0.7); }
+            70%  { box-shadow: 0 0 0 14px rgba(218,165,32,0);   }
+            100% { box-shadow: 0 0 0 0   rgba(218,165,32,0);   }
+        }
+
+        @keyframes zone-pulse-fast {
+            0%   { box-shadow: 0 0 0 0   rgba(255,215,0,0.9); }
+            70%  { box-shadow: 0 0 0 20px rgba(255,215,0,0);   }
+            100% { box-shadow: 0 0 0 0   rgba(255,215,0,0);   }
+        }
+
+        @keyframes zone-correct {
+            0%   { transform: translate(-50%,-50%) scale(1);    }
+            50%  { transform: translate(-50%,-50%) scale(1.25); }
+            100% { transform: translate(-50%,-50%) scale(1);    }
+        }
+
+        @keyframes zone-wrong {
+            0%,100% { transform: translate(-50%,-50%); }
+            25%     { transform: translate(calc(-50% - 9px),-50%); }
+            75%     { transform: translate(calc(-50% + 9px),-50%); }
+        }
+
+        @keyframes pop {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        .victory { color: #FFD700; font-size: 1.2em; animation: pop 0.7s ease infinite; }
+
+        /* ── Start screen ── */
+        .start-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(160deg, #6B1111 0%, #1A0505 100%);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .start-overlay.hidden { display: none; }
+
+        .start-card {
+            background: rgba(0,0,0,0.45);
+            border: 3px solid #DAA520;
+            border-radius: 20px;
+            max-width: 620px;
+            width: 100%;
+            padding: 36px 40px 32px;
+            text-align: center;
+            box-shadow: 0 12px 60px rgba(0,0,0,0.7);
+            animation: popIn 0.4s ease;
+        }
+
+        .start-card h1 {
+            font-size: 2.4em;
+            color: #FFD700;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+            margin-bottom: 4px;
+        }
+
+        .start-tagline {
+            color: #DAA520;
+            font-style: italic;
+            font-size: 1em;
+            margin-bottom: 22px;
+        }
+
+        .start-intro {
+            color: #F5DEB3;
+            font-size: 0.97em;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            text-align: left;
+            background: rgba(218,165,32,0.07);
+            border-left: 3px solid #DAA520;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .start-steps {
+            text-align: left;
+            margin-bottom: 22px;
+        }
+
+        .start-steps h3 {
+            color: #FFD700;
+            font-size: 1em;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+            color: #E8D5B0;
+            font-size: 0.92em;
+        }
+
+        .step-num {
+            background: #DAA520;
+            color: #1A0000;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.85em;
+        }
+
+        .start-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+
+        .start-item-chip {
+            background: rgba(218,165,32,0.12);
+            border: 1px solid #DAA520;
+            border-radius: 12px;
+            padding: 6px 14px;
+            font-size: 0.85em;
+            color: #F5DEB3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .start-item-chip .chip-icon { font-size: 1.2em; }
+        .start-item-chip .chip-latin { font-weight: bold; color: #FFD700; }
+        .start-item-chip .chip-nl { font-style: italic; color: #DAA520; font-size: 0.88em; }
+
+        .btn-start {
+            background: linear-gradient(135deg, #DAA520, #A07010);
+            color: #1A0000;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-family: Georgia, serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.18s, box-shadow 0.18s;
+            letter-spacing: 1px;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(218,165,32,0.5);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            body { height: auto; overflow: auto; }
+            .game-container { flex-wrap: wrap; align-items: flex-start; flex: none; }
+            .soldier-panel  { width: 100%; flex: none; min-height: 400px; }
+            .items-panel    { width: 100%; flex: none; overflow-y: visible; }
+            .scoreboard-panel { width: 100%; flex: none; }
+            .score-bar      { flex-direction: column; gap: 8px; }
+            .score-bar-left, .score-bar-right { align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Start screen ── -->
+<div class="start-overlay" id="start-overlay">
+    <div class="start-card">
+        <h1>⚔️ The Legionary ⚔️</h1>
+        <p class="start-tagline">A museum game about the Roman soldier</p>
+
+        <div class="start-intro">
+            <strong>Who was a legionary?</strong><br>
+            A legionary was a soldier in the mighty Roman army. He wore heavy equipment to protect himself and defeat his enemies. Without the right equipment, he could not survive in battle!
+        </div>
+
+        <div class="start-steps">
+            <h3>🎮 How to play?</h3>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div>Look at the <strong>equipment</strong> on the right. Each item has a name and description.</div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div><strong>Drag</strong> each item to the correct spot on the soldier. Correct = green, wrong = red!</div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div>The <strong>timer</strong> starts when you begin. The faster you finish, the higher you score!</div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div>Enter your name on the <strong>scoreboard</strong> and challenge your friends!</div>
+            </div>
+        </div>
+
+        <div class="start-items">
+            <div class="start-item-chip">
+                <span class="chip-icon">⛑️</span>
+                <span><span class="chip-latin">Galea</span> <span class="chip-nl">— Helmet</span></span>
+            </div>
+            <div class="start-item-chip">
+                <span class="chip-icon">🪖</span>
+                <span><span class="chip-latin">Lorica Segmentata</span> <span class="chip-nl">— Body armour</span></span>
+            </div>
+            <div class="start-item-chip">
+                <span class="chip-icon">🛡️</span>
+                <span><span class="chip-latin">Scutum</span> <span class="chip-nl">— Shield</span></span>
+            </div>
+            <div class="start-item-chip">
+                <span class="chip-icon">🗡️</span>
+                <span><span class="chip-latin">Pilum</span> <span class="chip-nl">— Javelin</span></span>
+            </div>
+            <div class="start-item-chip">
+                <span class="chip-icon">⚔️</span>
+                <span><span class="chip-latin">Gladius</span> <span class="chip-nl">— Sword</span></span>
+            </div>
+            <div class="start-item-chip">
+                <span class="chip-icon">👟</span>
+                <span><span class="chip-latin">Caligae</span> <span class="chip-nl">— Sandals</span></span>
+            </div>
+        </div>
+
+        <button class="btn-start" onclick="startGame()">⚔️ Start the game!</button>
+    </div>
+</div>
+
+<header>
+    <h1>⚔️ The Legionary ⚔️</h1>
+    <p class="subtitle">Drag the Roman soldier's equipment to the correct place on his body!</p>
+</header>
+
+<div class="game-container">
+
+    <!-- ── Soldier panel ── -->
+    <div class="soldier-panel">
+        <div class="panel-title">🏛️ Romanus Miles – The Roman Soldier</div>
+
+        <div class="soldier-wrapper">
+            <img src="romeins%20legionair.svg" alt="Roman legionary" class="soldier-img">
+
+            <!-- Head / helmet -->
+            <div class="drop-zone overlay-dz" data-zone="hoofd"
+                 style="top:15.6%;left:50.5%">
+                <span class="zone-placeholder">?</span>
+            </div>
+
+            <!-- Torso / body armour -->
+            <div class="drop-zone overlay-dz" data-zone="romp"
+                 style="top:37.4%;left:51.8%">
+                <span class="zone-placeholder">?</span>
+            </div>
+
+            <!-- Left arm / shield -->
+            <div class="drop-zone overlay-dz" data-zone="linkerarm"
+                 style="top:62.4%;left:75.9%">
+                <span class="zone-placeholder">?</span>
+            </div>
+
+            <!-- Right hand / javelin -->
+            <div class="drop-zone overlay-dz" data-zone="rechterhand"
+                 style="top:51.1%;left:13.9%">
+                <span class="zone-placeholder">?</span>
+            </div>
+
+            <!-- Hip / sword -->
+            <div class="drop-zone overlay-dz" data-zone="heup"
+                 style="top:60.3%;left:42.0%">
+                <span class="zone-placeholder">?</span>
+            </div>
+
+            <!-- Feet / sandals -->
+            <div class="drop-zone overlay-dz" data-zone="voeten"
+                 style="top:92.6%;left:57.7%">
+                <span class="zone-placeholder">?</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Equipment panel ── -->
+    <div class="items-panel">
+        <div class="panel-title">⚔️ Equipment</div>
+
+        <div class="item-card" draggable="true" data-item="helm" data-zone="hoofd">
+            <div class="item-top">
+                <span class="item-icon">⛑️</span>
+                <div><div class="item-name">Galea</div><div class="item-latin">Helmet</div></div>
+            </div>
+            <p class="item-desc">Metal helmet with a red crest that protects the head from sword blows.</p>
+        </div>
+
+        <div class="item-card" draggable="true" data-item="pantser" data-zone="romp">
+            <div class="item-top">
+                <span class="item-icon">🪖</span>
+                <div><div class="item-name">Lorica Segmentata</div><div class="item-latin">Body armour</div></div>
+            </div>
+            <p class="item-desc">Segmented metal armour that protects the torso and shoulders.</p>
+        </div>
+
+        <div class="item-card" draggable="true" data-item="schild" data-zone="linkerarm">
+            <div class="item-top">
+                <span class="item-icon">🛡️</span>
+                <div><div class="item-name">Scutum</div><div class="item-latin">Shield</div></div>
+            </div>
+            <p class="item-desc">Large, curved, rectangular wooden shield – carried on the left arm.</p>
+        </div>
+
+        <div class="item-card" draggable="true" data-item="speer" data-zone="rechterhand">
+            <div class="item-top">
+                <span class="item-icon">🗡️</span>
+                <div><div class="item-name">Pilum</div><div class="item-latin">Javelin</div></div>
+            </div>
+            <p class="item-desc">Heavy javelin with an iron tip – held in the right hand.</p>
+        </div>
+
+        <div class="item-card" draggable="true" data-item="zwaard" data-zone="heup">
+            <div class="item-top">
+                <span class="item-icon">⚔️</span>
+                <div><div class="item-name">Gladius</div><div class="item-latin">Sword</div></div>
+            </div>
+            <p class="item-desc">Short, double-edged sword carried in a scabbard at the hip.</p>
+        </div>
+
+        <div class="item-card" draggable="true" data-item="sandalen" data-zone="voeten">
+            <div class="item-top">
+                <span class="item-icon">👟</span>
+                <div><div class="item-name">Caligae</div><div class="item-latin">Sandals</div></div>
+            </div>
+            <p class="item-desc">Sturdy, hobnailed military sandals made for long marches.</p>
+        </div>
+    </div>
+
+    <!-- ── Scoreboard ── -->
+    <div class="scoreboard-panel">
+        <div class="sb-title">🏆 Best Times</div>
+        <div id="scoreboard-body">
+            <p class="sb-empty">No scores yet. Complete the game!</p>
+        </div>
+        <div style="text-align:center;margin-top:10px">
+            <button class="btn-secondary" onclick="clearScoreboard()">🗑️ Clear scoreboard</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- ── Score bar ── -->
+<div class="score-bar">
+    <div class="score-bar-left">
+        <div class="score-line">Score: <span id="score">0</span> / 6</div>
+        <div class="timer-line">⏱ <span id="timer">0:00</span></div>
+    </div>
+    <div id="feedback">Drag an item onto the soldier! 👇</div>
+    <div class="score-bar-right">
+        <button class="btn" onclick="resetGame()">🔄 Play again</button>
+    </div>
+</div>
+
+<!-- ── Victory modal ── -->
+<div class="modal-overlay" id="modal">
+    <div class="modal">
+        <h2>🎉 Ave Romanus!</h2>
+        <p>The legionary is fully equipped!</p>
+        <div class="modal-time" id="modal-time">0:00</div>
+        <p>Enter your name for the scoreboard:</p>
+        <input type="text" id="player-name" maxlength="20" placeholder="Your name…" autocomplete="off">
+        <div class="modal-btns">
+            <button class="btn" onclick="saveScore()">💾 Save</button>
+            <button class="btn-secondary" onclick="closeModal()">Skip</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── State ──
+    let score = 0;
+    const placed = {};
+    let timerSec = 0;
+    let timerInterval = null;
+    let timerRunning = false;
+    let lastFinishTime = 0;
+    let newScoreIndex = -1;
+
+    const ZONE_META = {
+        hoofd:       { label: 'Head'       },
+        romp:        { label: 'Torso'      },
+        linkerarm:   { label: 'Left arm'   },
+        rechterhand: { label: 'Right hand' },
+        heup:        { label: 'Hip'        },
+        voeten:      { label: 'Feet'       },
+    };
+
+    const CORRECT_MSG = ['Correct! Well done! ✅', 'Excellent! ✅', 'That\'s right! ✅', 'Good work, soldier! ✅'];
+    const WRONG_MSG   = ['That\'s not right, try again! ❌', 'Not quite… ❌', 'Look at the description again! ❌'];
+
+    // ── Timer ──
+    function startTimer() {
+        if (timerRunning) return;
+        timerRunning = true;
+        timerInterval = setInterval(() => {
+            timerSec++;
+            document.getElementById('timer').textContent = formatTime(timerSec);
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+        timerRunning = false;
+    }
+
+    function resetTimer() {
+        stopTimer();
+        timerSec = 0;
+        document.getElementById('timer').textContent = '0:00';
+    }
+
+    function formatTime(s) {
+        const m = Math.floor(s / 60);
+        const sec = s % 60;
+        return `${m}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    // ── Drag & drop (mouse) ──
+    document.querySelectorAll('.item-card').forEach(card => {
+        card.addEventListener('dragstart', onDragStart);
+        card.addEventListener('dragend',   onDragEnd);
+    });
+
+    document.querySelectorAll('.drop-zone').forEach(zone => {
+        zone.addEventListener('dragover',  onDragOver);
+        zone.addEventListener('dragleave', onDragLeave);
+        zone.addEventListener('drop',      onDrop);
+    });
+
+    function onDragStart(e) {
+        if (this.classList.contains('placed')) { e.preventDefault(); return; }
+        startTimer();
+        e.dataTransfer.setData('itemId',   this.dataset.item);
+        e.dataTransfer.setData('itemZone', this.dataset.zone);
+        this.classList.add('dragging');
+    }
+
+    function onDragEnd()  { this.classList.remove('dragging'); }
+    function onDragOver(e)  { e.preventDefault(); if (!placed[this.dataset.zone]) this.classList.add('drag-over'); }
+    function onDragLeave()  { this.classList.remove('drag-over'); }
+
+    function onDrop(e) {
+        e.preventDefault();
+        this.classList.remove('drag-over');
+        handleDrop(this, e.dataTransfer.getData('itemId'), e.dataTransfer.getData('itemZone'));
+    }
+
+    // ── Core drop logic ──
+    function handleDrop(zoneEl, itemId, correctZone) {
+        const targetZone = zoneEl.dataset.zone;
+        if (placed[targetZone]) return;
+
+        const card  = document.querySelector(`[data-item="${itemId}"]`);
+        const name  = card.querySelector('.item-name').textContent;
+        const latin = card.querySelector('.item-latin').textContent;
+        const icon  = card.querySelector('.item-icon').textContent;
+
+        if (correctZone === targetZone) {
+            placed[targetZone] = true;
+            zoneEl.classList.add('correct');
+            zoneEl.innerHTML =
+                `<span style="font-size:1.6em;line-height:1">${icon}</span>` +
+                `<span class="zone-label" style="color:#90EE90">${name}</span>`;
+            card.classList.add('placed');
+            score++;
+            document.getElementById('score').textContent = score;
+
+            if (score === 6) {
+                stopTimer();
+                lastFinishTime = timerSec;
+                document.getElementById('feedback').className = 'victory';
+                document.getElementById('feedback').textContent = '🎉 Amazing! The legionary is fully equipped!';
+                setTimeout(showVictoryModal, 600);
+            } else {
+                setFeedback(CORRECT_MSG);
+            }
+        } else {
+            zoneEl.classList.add('wrong');
+            setTimeout(() => zoneEl.classList.remove('wrong'), 500);
+            setFeedback(WRONG_MSG);
+        }
+    }
+
+    function setFeedback(arr) {
+        document.getElementById('feedback').className = '';
+        document.getElementById('feedback').textContent = arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    // ── Victory modal ──
+    function showVictoryModal() {
+        document.getElementById('modal-time').textContent = formatTime(lastFinishTime);
+        document.getElementById('player-name').value = '';
+        document.getElementById('modal').classList.add('open');
+        document.getElementById('player-name').focus();
+    }
+
+    document.getElementById('player-name').addEventListener('keydown', e => {
+        if (e.key === 'Enter') saveScore();
+    });
+
+    function closeModal() {
+        document.getElementById('modal').classList.remove('open');
+        renderScoreboard(-1);
+    }
+
+    function saveScore() {
+        const name = document.getElementById('player-name').value.trim() || 'Anonymous';
+        const scores = loadScores();
+        scores.push({ name, time: lastFinishTime, date: new Date().toLocaleDateString('en-GB') });
+        scores.sort((a, b) => a.time - b.time);
+        if (scores.length > 10) scores.length = 10;
+        newScoreIndex = scores.findIndex(s => s.time === lastFinishTime && s.name === name);
+        localStorage.setItem('legionair_scores_en', JSON.stringify(scores));
+        document.getElementById('modal').classList.remove('open');
+        renderScoreboard(newScoreIndex);
+    }
+
+    // ── Scoreboard ──
+    function clearScoreboard() {
+        if (!confirm('Are you sure you want to clear the scoreboard?')) return;
+        localStorage.removeItem('legionair_scores_en');
+        renderScoreboard(-1);
+    }
+
+    function loadScores() {
+        try { return JSON.parse(localStorage.getItem('legionair_scores_en')) || []; }
+        catch { return []; }
+    }
+
+    function renderScoreboard(highlightIdx) {
+        const scores = loadScores();
+        const body = document.getElementById('scoreboard-body');
+
+        if (scores.length === 0) {
+            body.innerHTML = '<p class="sb-empty">No scores yet. Complete the game!</p>';
+            return;
+        }
+
+        const medals = ['🥇', '🥈', '🥉'];
+        const rows = scores.map((s, i) => {
+            const medal = medals[i] || (i + 1) + '.';
+            const cls   = i === highlightIdx ? ' class="sb-new"' : '';
+            return `<tr${cls}>
+                <td class="sb-rank">${medal}</td>
+                <td>${escHtml(s.name)}</td>
+                <td class="sb-time">${formatTime(s.time)}</td>
+                <td style="font-size:0.75em;color:#9A7A3A">${s.date}</td>
+            </tr>`;
+        }).join('');
+
+        body.innerHTML = `<table class="sb-table">
+            <thead><tr>
+                <th>#</th><th>Name</th><th style="text-align:right">Time</th><th>Date</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    function escHtml(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── Reset ──
+    function resetGame() {
+        score = 0;
+        for (const k in placed) delete placed[k];
+        resetTimer();
+        document.getElementById('score').textContent = '0';
+        document.getElementById('feedback').className = '';
+        document.getElementById('feedback').textContent = 'Drag an item onto the soldier! 👇';
+        document.getElementById('modal').classList.remove('open');
+
+        document.querySelectorAll('.drop-zone').forEach(z => {
+            z.className = 'drop-zone overlay-dz';
+            z.innerHTML = `<span class="zone-placeholder">?</span>`;
+        });
+
+        document.querySelectorAll('.item-card').forEach(c => c.classList.remove('placed', 'dragging'));
+    }
+
+    // ── Touch support ──
+    let touchCard = null, touchGhost = null;
+
+    document.querySelectorAll('.item-card').forEach(card => {
+        card.addEventListener('touchstart', tStart, { passive: false });
+        card.addEventListener('touchmove',  tMove,  { passive: false });
+        card.addEventListener('touchend',   tEnd);
+    });
+
+    function tStart(e) {
+        if (this.classList.contains('placed')) return;
+        e.preventDefault();
+        startTimer();
+        touchCard = this;
+        const t = e.touches[0];
+        touchGhost = this.cloneNode(true);
+        Object.assign(touchGhost.style, {
+            position: 'fixed', opacity: '0.75', pointerEvents: 'none',
+            zIndex: '999', width: this.offsetWidth + 'px', margin: '0',
+            left: (t.clientX - this.offsetWidth / 2) + 'px',
+            top:  (t.clientY - this.offsetHeight / 2) + 'px',
+        });
+        document.body.appendChild(touchGhost);
+        this.classList.add('dragging');
+    }
+
+    function tMove(e) {
+        if (!touchGhost) return;
+        e.preventDefault();
+        const t = e.touches[0];
+        touchGhost.style.left = (t.clientX - touchGhost.offsetWidth / 2) + 'px';
+        touchGhost.style.top  = (t.clientY - touchGhost.offsetHeight / 2) + 'px';
+        document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drag-over'));
+        const el = document.elementFromPoint(t.clientX, t.clientY);
+        if (el) { const z = el.closest('.drop-zone'); if (z) z.classList.add('drag-over'); }
+    }
+
+    function tEnd(e) {
+        if (!touchGhost || !touchCard) return;
+        const t = e.changedTouches[0];
+        document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drag-over'));
+        const el = document.elementFromPoint(t.clientX, t.clientY);
+        if (el) { const z = el.closest('.drop-zone'); if (z) handleDrop(z, touchCard.dataset.item, touchCard.dataset.zone); }
+        touchCard.classList.remove('dragging');
+        document.body.removeChild(touchGhost);
+        touchGhost = null; touchCard = null;
+    }
+
+    // ── Start screen ──
+    function startGame() {
+        document.getElementById('start-overlay').classList.add('hidden');
+    }
+
+    // ── Init ──
+    renderScoreboard(-1);
+</script>
+</body>
+</html>
