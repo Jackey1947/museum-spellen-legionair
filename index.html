@@ -487,13 +487,18 @@
         .start-item-chip {
             background: rgba(218,165,32,0.12);
             border: 1px solid #DAA520;
-            border-radius: 20px;
-            padding: 5px 12px;
+            border-radius: 12px;
+            padding: 6px 14px;
             font-size: 0.85em;
             color: #F5DEB3;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .start-item-chip span { margin-right: 4px; }
+        .start-item-chip .chip-icon { font-size: 1.2em; }
+        .start-item-chip .chip-latin { font-weight: bold; color: #FFD700; }
+        .start-item-chip .chip-nl { font-style: italic; color: #DAA520; font-size: 0.88em; }
 
         .btn-start {
             background: linear-gradient(135deg, #DAA520, #A07010);
@@ -557,12 +562,30 @@
         </div>
 
         <div class="start-items">
-            <div class="start-item-chip"><span>⛑️</span> Galea</div>
-            <div class="start-item-chip"><span>🪖</span> Lorica Segmentata</div>
-            <div class="start-item-chip"><span>🛡️</span> Scutum</div>
-            <div class="start-item-chip"><span>🗡️</span> Pilum</div>
-            <div class="start-item-chip"><span>⚔️</span> Gladius</div>
-            <div class="start-item-chip"><span>👟</span> Caligae</div>
+            <div class="start-item-chip">
+                <span class="chip-icon">⛑️</span>
+                <span><span class="chip-latin">Galea</span> <span class="chip-nl">— Helm</span></span>
+            </div>
+            <div class="start-item-chip">
+                <span class="chip-icon">🪖</span>
+                <span><span class="chip-latin">Lorica Segmentata</span> <span class="chip-nl">— Borstpantser</span></span>
+            </div>
+            <div class="start-item-chip">
+                <span class="chip-icon">🛡️</span>
+                <span><span class="chip-latin">Scutum</span> <span class="chip-nl">— Schild</span></span>
+            </div>
+            <div class="start-item-chip">
+                <span class="chip-icon">🗡️</span>
+                <span><span class="chip-latin">Pilum</span> <span class="chip-nl">— Werpspeer</span></span>
+            </div>
+            <div class="start-item-chip">
+                <span class="chip-icon">⚔️</span>
+                <span><span class="chip-latin">Gladius</span> <span class="chip-nl">— Zwaard</span></span>
+            </div>
+            <div class="start-item-chip">
+                <span class="chip-icon">👟</span>
+                <span><span class="chip-latin">Caligae</span> <span class="chip-nl">— Sandalen</span></span>
+            </div>
         </div>
 
         <button class="btn-start" onclick="startGame()">⚔️ Start het spel!</button>
