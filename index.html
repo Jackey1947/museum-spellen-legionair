@@ -87,60 +87,76 @@
             position: absolute;
         }
 
+        /* ── Drop zones: pulserende cirkels ── */
         .drop-zone {
-            border: 2px dashed #DAA520;
-            border-radius: 10px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            transition: background 0.25s, border-color 0.25s, transform 0.15s;
-            background: rgba(218,165,32,0.08);
             cursor: default;
-            position: relative;
-            padding: 6px;
-            gap: 6px;
         }
 
-        .drop-zone.drag-over {
-            background: rgba(218,165,32,0.28);
+        .drop-zone.overlay-dz {
+            position: absolute;
+            width: 14%;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(218,165,32,0.18);
+            border: 2px solid rgba(218,165,32,0.65);
+            animation: zone-pulse 2s ease-out infinite;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        /* Staggered pulse delay per cirkel */
+        .drop-zone.overlay-dz:nth-child(2) { animation-delay: 0s;     }
+        .drop-zone.overlay-dz:nth-child(3) { animation-delay: 0.33s;  }
+        .drop-zone.overlay-dz:nth-child(4) { animation-delay: 0.66s;  }
+        .drop-zone.overlay-dz:nth-child(5) { animation-delay: 1s;     }
+        .drop-zone.overlay-dz:nth-child(6) { animation-delay: 1.33s;  }
+        .drop-zone.overlay-dz:nth-child(7) { animation-delay: 1.66s;  }
+
+        .drop-zone.overlay-dz.drag-over {
+            background: rgba(218,165,32,0.42);
             border-color: #FFD700;
-            border-style: solid;
-            transform: scale(1.03);
+            transform: translate(-50%, -50%) scale(1.18);
+            animation: zone-pulse-fast 0.5s ease-out infinite;
         }
 
-        .drop-zone.correct {
-            background: rgba(34,139,34,0.3);
+        .drop-zone.overlay-dz.correct {
+            animation: zone-correct 0.4s ease forwards;
+            background: rgba(34,139,34,0.38);
             border: 2px solid #4CAF50;
+            box-shadow: 0 0 16px rgba(76,175,80,0.55);
         }
 
-        .drop-zone.wrong {
-            background: rgba(200,0,0,0.3);
+        .drop-zone.overlay-dz.wrong {
+            background: rgba(200,0,0,0.35);
             border-color: #FF4444;
-            animation: shake 0.45s ease;
+            animation: zone-wrong 0.45s ease !important;
         }
 
         .zone-label {
-            font-size: 0.72em;
-            color: #DAA520;
             position: absolute;
-            top: 3px;
-            left: 6px;
+            top: calc(100% + 5px);
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.65em;
+            color: #FFD700;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 7px;
+            border-radius: 4px;
             pointer-events: none;
         }
 
         .zone-placeholder {
-            font-size: 0.85em;
-            color: #bfa060;
+            font-size: 1.1em;
+            color: rgba(218,165,32,0.8);
             pointer-events: none;
+            line-height: 1;
         }
-
-        .z-hoofd     { width: 90px;  height: 66px; }
-        .z-romp      { width: 200px; height: 82px; }
-        .z-armen-row { display: flex; gap: 10px; justify-content: center; }
-        .z-arm       { width: 90px;  height: 68px; }
-        .z-heup      { width: 140px; height: 58px; }
-        .z-voeten    { width: 160px; height: 64px; }
 
         /* ── Items panel ── */
         .items-panel {
@@ -338,11 +354,29 @@
 
         .btn-secondary:hover { background: rgba(218,165,32,0.15); }
 
-        /* ── Animations ── */
-        @keyframes shake {
-            0%,100% { transform: translateX(0); }
-            25%      { transform: translateX(-8px); }
-            75%      { transform: translateX(8px); }
+        /* ── Animaties ── */
+        @keyframes zone-pulse {
+            0%   { box-shadow: 0 0 0 0   rgba(218,165,32,0.7); }
+            70%  { box-shadow: 0 0 0 14px rgba(218,165,32,0);   }
+            100% { box-shadow: 0 0 0 0   rgba(218,165,32,0);   }
+        }
+
+        @keyframes zone-pulse-fast {
+            0%   { box-shadow: 0 0 0 0   rgba(255,215,0,0.9); }
+            70%  { box-shadow: 0 0 0 20px rgba(255,215,0,0);   }
+            100% { box-shadow: 0 0 0 0   rgba(255,215,0,0);   }
+        }
+
+        @keyframes zone-correct {
+            0%   { transform: translate(-50%,-50%) scale(1);    }
+            50%  { transform: translate(-50%,-50%) scale(1.25); }
+            100% { transform: translate(-50%,-50%) scale(1);    }
+        }
+
+        @keyframes zone-wrong {
+            0%,100% { transform: translate(-50%,-50%); }
+            25%     { transform: translate(calc(-50% - 9px),-50%); }
+            75%     { transform: translate(calc(-50% + 9px),-50%); }
         }
 
         @keyframes pop {
@@ -549,46 +583,46 @@
         <div class="soldier-wrapper">
             <img src="romeins%20legionair.svg" alt="Romeinse legionair" class="soldier-img">
 
-            <!-- Hoofd / helm -->
+            <!-- Hoofd / helm — middelpunt cirkel -->
             <div class="drop-zone overlay-dz" data-zone="hoofd"
-                 style="top:2.5%;left:40%;width:20%;height:13%">
+                 style="top:9%;left:50%">
+                <span class="zone-placeholder">?</span>
                 <span class="zone-label">Hoofd</span>
-                <span class="zone-placeholder">???</span>
             </div>
 
             <!-- Romp / borstpantser -->
             <div class="drop-zone overlay-dz" data-zone="romp"
-                 style="top:18%;left:28%;width:40%;height:24%">
+                 style="top:30%;left:52%">
+                <span class="zone-placeholder">?</span>
                 <span class="zone-label">Romp</span>
-                <span class="zone-placeholder">???</span>
             </div>
 
             <!-- Linkerarm / schild -->
             <div class="drop-zone overlay-dz" data-zone="linkerarm"
-                 style="top:17%;left:4%;width:26%;height:33%">
+                 style="top:33%;left:17%">
+                <span class="zone-placeholder">?</span>
                 <span class="zone-label">Linkerarm</span>
-                <span class="zone-placeholder">???</span>
             </div>
 
             <!-- Rechterhand / pilum (apart in afbeelding) -->
             <div class="drop-zone overlay-dz" data-zone="rechterhand"
-                 style="top:17%;right:4%;width:22%;height:33%">
+                 style="top:33%;left:85%">
+                <span class="zone-placeholder">?</span>
                 <span class="zone-label">Rechterhand</span>
-                <span class="zone-placeholder">???</span>
             </div>
 
             <!-- Heup / gladius -->
             <div class="drop-zone overlay-dz" data-zone="heup"
-                 style="top:42%;left:30%;width:38%;height:11%">
+                 style="top:47%;left:52%">
+                <span class="zone-placeholder">?</span>
                 <span class="zone-label">Heup</span>
-                <span class="zone-placeholder">???</span>
             </div>
 
             <!-- Voeten / caligae -->
             <div class="drop-zone overlay-dz" data-zone="voeten"
-                 style="top:85%;left:24%;width:50%;height:13%">
+                 style="top:91%;left:50%">
+                <span class="zone-placeholder">?</span>
                 <span class="zone-label">Voeten</span>
-                <span class="zone-placeholder">???</span>
             </div>
         </div>
     </div>
@@ -783,9 +817,8 @@
             placed[targetZone] = true;
             zoneEl.classList.add('correct');
             zoneEl.innerHTML =
-                `<span class="zone-label">${label}</span>` +
-                `<span style="font-size:1.6em">${icon}</span>` +
-                `<span style="font-size:0.82em;color:#90EE90;line-height:1.3">${name}<br><em>${latin}</em></span>`;
+                `<span style="font-size:1.6em;line-height:1">${icon}</span>` +
+                `<span class="zone-label" style="color:#90EE90">${name}</span>`;
             card.classList.add('placed');
             score++;
             document.getElementById('score').textContent = score;
