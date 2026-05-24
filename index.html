@@ -354,6 +354,133 @@
 
         .victory { color: #FFD700; font-size: 1.2em; animation: pop 0.7s ease infinite; }
 
+        /* ── Start screen ── */
+        .start-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(160deg, #6B1111 0%, #1A0505 100%);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .start-overlay.hidden { display: none; }
+
+        .start-card {
+            background: rgba(0,0,0,0.45);
+            border: 3px solid #DAA520;
+            border-radius: 20px;
+            max-width: 620px;
+            width: 100%;
+            padding: 36px 40px 32px;
+            text-align: center;
+            box-shadow: 0 12px 60px rgba(0,0,0,0.7);
+            animation: popIn 0.4s ease;
+        }
+
+        .start-card h1 {
+            font-size: 2.4em;
+            color: #FFD700;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+            margin-bottom: 4px;
+        }
+
+        .start-tagline {
+            color: #DAA520;
+            font-style: italic;
+            font-size: 1em;
+            margin-bottom: 22px;
+        }
+
+        .start-intro {
+            color: #F5DEB3;
+            font-size: 0.97em;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            text-align: left;
+            background: rgba(218,165,32,0.07);
+            border-left: 3px solid #DAA520;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .start-steps {
+            text-align: left;
+            margin-bottom: 22px;
+        }
+
+        .start-steps h3 {
+            color: #FFD700;
+            font-size: 1em;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+            color: #E8D5B0;
+            font-size: 0.92em;
+        }
+
+        .step-num {
+            background: #DAA520;
+            color: #1A0000;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.85em;
+        }
+
+        .start-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+
+        .start-item-chip {
+            background: rgba(218,165,32,0.12);
+            border: 1px solid #DAA520;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.85em;
+            color: #F5DEB3;
+        }
+
+        .start-item-chip span { margin-right: 4px; }
+
+        .btn-start {
+            background: linear-gradient(135deg, #DAA520, #A07010);
+            color: #1A0000;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-family: Georgia, serif;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.18s, box-shadow 0.18s;
+            letter-spacing: 1px;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(218,165,32,0.5);
+        }
+
         /* ── Responsive ── */
         @media (max-width: 750px) {
             .game-container { flex-direction: column; align-items: center; }
@@ -364,6 +491,50 @@
     </style>
 </head>
 <body>
+
+<!-- ── Start screen ── -->
+<div class="start-overlay" id="start-overlay">
+    <div class="start-card">
+        <h1>⚔️ De Legionair ⚔️</h1>
+        <p class="start-tagline">Een museumspel over de Romeinse soldaat</p>
+
+        <div class="start-intro">
+            <strong>Wie was een legionair?</strong><br>
+            Een legionair was een soldaat in het machtige Romeinse leger. Hij droeg zware uitrusting om zichzelf te beschermen en zijn vijanden te verslaan. Zonder de juiste uitrusting kon hij de strijd niet aan!
+        </div>
+
+        <div class="start-steps">
+            <h3>🎮 Hoe speel je?</h3>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div>Bekijk de <strong>uitrusting</strong> rechts in beeld. Elk voorwerp heeft een naam en uitleg.</div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div><strong>Sleep</strong> elk voorwerp naar de juiste plek op de soldaat. Goed = groen, fout = rood!</div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div>De <strong>timer</strong> loopt zodra je begint. Hoe sneller je klaar bent, hoe hoger je scoort!</div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div>Schrijf je naam in het <strong>scorebord</strong> en daag je vrienden uit!</div>
+            </div>
+        </div>
+
+        <div class="start-items">
+            <div class="start-item-chip"><span>⛑️</span> Helm</div>
+            <div class="start-item-chip"><span>🪖</span> Borstpantser</div>
+            <div class="start-item-chip"><span>🛡️</span> Schild</div>
+            <div class="start-item-chip"><span>🗡️</span> Werpspeer</div>
+            <div class="start-item-chip"><span>⚔️</span> Zwaard</div>
+            <div class="start-item-chip"><span>👟</span> Sandalen</div>
+        </div>
+
+        <button class="btn-start" onclick="startGame()">⚔️ Start het spel!</button>
+    </div>
+</div>
 
 <header>
     <h1>⚔️ De Legionair ⚔️</h1>
@@ -785,6 +956,11 @@
         touchCard.classList.remove('dragging');
         document.body.removeChild(touchGhost);
         touchGhost = null; touchCard = null;
+    }
+
+    // ── Start screen ──
+    function startGame() {
+        document.getElementById('start-overlay').classList.add('hidden');
     }
 
     // ── Init ──
