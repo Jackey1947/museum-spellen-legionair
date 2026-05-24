@@ -587,42 +587,36 @@
             <div class="drop-zone overlay-dz" data-zone="hoofd"
                  style="top:15.6%;left:50.5%">
                 <span class="zone-placeholder">?</span>
-                <span class="zone-label">Hoofd</span>
             </div>
 
             <!-- Romp / borstpantser -->
             <div class="drop-zone overlay-dz" data-zone="romp"
                  style="top:37.4%;left:51.8%">
                 <span class="zone-placeholder">?</span>
-                <span class="zone-label">Romp</span>
             </div>
 
             <!-- Linkerarm / schild -->
             <div class="drop-zone overlay-dz" data-zone="linkerarm"
                  style="top:62.4%;left:75.9%">
                 <span class="zone-placeholder">?</span>
-                <span class="zone-label">Linkerarm</span>
             </div>
 
             <!-- Rechterhand / pilum -->
             <div class="drop-zone overlay-dz" data-zone="rechterhand"
                  style="top:51.1%;left:13.9%">
                 <span class="zone-placeholder">?</span>
-                <span class="zone-label">Rechterhand</span>
             </div>
 
             <!-- Heup / gladius -->
             <div class="drop-zone overlay-dz" data-zone="heup"
                  style="top:60.3%;left:42.0%">
                 <span class="zone-placeholder">?</span>
-                <span class="zone-label">Heup</span>
             </div>
 
             <!-- Voeten / caligae -->
             <div class="drop-zone overlay-dz" data-zone="voeten"
                  style="top:92.6%;left:57.7%">
                 <span class="zone-placeholder">?</span>
-                <span class="zone-label">Voeten</span>
             </div>
         </div>
     </div>
@@ -636,7 +630,7 @@
             <div class="item-card" draggable="true" data-item="helm" data-zone="hoofd">
                 <div class="item-top">
                     <span class="item-icon">⛑️</span>
-                    <div><div class="item-name">Helm</div><div class="item-latin">Galea</div></div>
+                    <div><div class="item-name">Galea</div><div class="item-latin">Helm</div></div>
                 </div>
                 <p class="item-desc">Metalen helm met rode pluim die het hoofd beschermt tegen zwaardklappen.</p>
             </div>
@@ -644,7 +638,7 @@
             <div class="item-card" draggable="true" data-item="pantser" data-zone="romp">
                 <div class="item-top">
                     <span class="item-icon">🪖</span>
-                    <div><div class="item-name">Borstpantser</div><div class="item-latin">Lorica Segmentata</div></div>
+                    <div><div class="item-name">Lorica Segmentata</div><div class="item-latin">Borstpantser</div></div>
                 </div>
                 <p class="item-desc">Gesegmenteerd metalen pantser dat de romp en schouders beschermt.</p>
             </div>
@@ -652,7 +646,7 @@
             <div class="item-card" draggable="true" data-item="schild" data-zone="linkerarm">
                 <div class="item-top">
                     <span class="item-icon">🛡️</span>
-                    <div><div class="item-name">Schild</div><div class="item-latin">Scutum</div></div>
+                    <div><div class="item-name">Scutum</div><div class="item-latin">Schild</div></div>
                 </div>
                 <p class="item-desc">Groot, gebogen, rechthoekig schild van hout – gedragen aan de linkerarm.</p>
             </div>
@@ -660,7 +654,7 @@
             <div class="item-card" draggable="true" data-item="speer" data-zone="rechterhand">
                 <div class="item-top">
                     <span class="item-icon">🗡️</span>
-                    <div><div class="item-name">Werpspeer</div><div class="item-latin">Pilum</div></div>
+                    <div><div class="item-name">Pilum</div><div class="item-latin">Werpspeer</div></div>
                 </div>
                 <p class="item-desc">Zware werpspeer met ijzeren punt – vastgehouden in de rechterhand.</p>
             </div>
@@ -668,7 +662,7 @@
             <div class="item-card" draggable="true" data-item="zwaard" data-zone="heup">
                 <div class="item-top">
                     <span class="item-icon">⚔️</span>
-                    <div><div class="item-name">Zwaard</div><div class="item-latin">Gladius</div></div>
+                    <div><div class="item-name">Gladius</div><div class="item-latin">Zwaard</div></div>
                 </div>
                 <p class="item-desc">Kort, tweesnijdend zwaard gedragen in een schede aan de heup.</p>
             </div>
@@ -676,7 +670,7 @@
             <div class="item-card" draggable="true" data-item="sandalen" data-zone="voeten">
                 <div class="item-top">
                     <span class="item-icon">👟</span>
-                    <div><div class="item-name">Sandalen</div><div class="item-latin">Caligae</div></div>
+                    <div><div class="item-name">Caligae</div><div class="item-latin">Sandalen</div></div>
                 </div>
                 <p class="item-desc">Stevige, genagelde militaire sandalen voor lange marsen.</p>
             </div>
@@ -819,7 +813,7 @@
             zoneEl.classList.add('correct');
             zoneEl.innerHTML =
                 `<span style="font-size:1.6em;line-height:1">${icon}</span>` +
-                `<span class="zone-label" style="color:#90EE90">${name}</span>`;
+                `<span class="zone-label" style="color:#90EE90">${latin}</span>`;
             card.classList.add('placed');
             score++;
             document.getElementById('score').textContent = score;
