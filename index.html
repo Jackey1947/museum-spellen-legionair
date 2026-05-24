@@ -10,7 +10,10 @@
         body {
             font-family: 'Georgia', serif;
             background: linear-gradient(160deg, #6B1111 0%, #2A0A0A 100%);
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
             color: #F5DEB3;
         }
 
@@ -37,50 +40,57 @@
         /* ── Layout ── */
         .game-container {
             display: flex;
-            gap: 20px;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            align-items: flex-start;
-        }
-
-        .right-col {
-            display: flex;
-            flex-direction: column;
             gap: 16px;
-            width: 270px;
-            flex-shrink: 0;
+            padding: 16px;
+            flex: 1;
+            min-height: 0;
+            align-items: stretch;
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            box-sizing: border-box;
         }
 
         /* ── Soldier panel ── */
         .soldier-panel {
             flex: 1;
+            min-width: 0;
+            min-height: 0;
             background: rgba(0,0,0,0.25);
             border: 2px solid #DAA520;
             border-radius: 14px;
-            padding: 20px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
         }
 
         .panel-title {
             text-align: center;
             color: #FFD700;
             font-size: 1.15em;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
             letter-spacing: 1px;
+            flex-shrink: 0;
+            width: 100%;
         }
 
+        /* Wrapper groeit mee met paneelhoogte, behoudt SVG-verhouding */
         .soldier-wrapper {
             position: relative;
-            width: 100%;
-            max-width: 440px;
-            margin: 0 auto 10px;
+            flex: 1;
+            min-height: 0;
+            aspect-ratio: 1920 / 2426;
+            max-width: 100%;
         }
 
         .soldier-img {
             width: 100%;
-            height: auto;
+            height: 100%;
             display: block;
             border-radius: 8px;
+            object-fit: contain;
         }
 
         .drop-zone.overlay-dz {
@@ -160,10 +170,15 @@
 
         /* ── Items panel ── */
         .items-panel {
+            width: 230px;
+            flex-shrink: 0;
             background: rgba(0,0,0,0.25);
             border: 2px solid #DAA520;
             border-radius: 14px;
-            padding: 20px;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .item-card {
@@ -192,6 +207,8 @@
 
         /* ── Scoreboard panel ── */
         .scoreboard-panel {
+            width: 190px;
+            flex-shrink: 0;
             background: rgba(0,0,0,0.25);
             border: 2px solid #DAA520;
             border-radius: 14px;
@@ -520,9 +537,12 @@
         }
 
         /* ── Responsive ── */
-        @media (max-width: 750px) {
-            .game-container { flex-direction: column; align-items: center; }
-            .right-col      { width: 100%; }
+        @media (max-width: 900px) {
+            body { height: auto; overflow: auto; }
+            .game-container { flex-wrap: wrap; align-items: flex-start; flex: none; }
+            .soldier-panel  { width: 100%; flex: none; min-height: 400px; }
+            .items-panel    { width: 100%; flex: none; overflow-y: visible; }
+            .scoreboard-panel { width: 100%; flex: none; }
             .score-bar      { flex-direction: column; gap: 8px; }
             .score-bar-left, .score-bar-right { align-items: center; }
         }
@@ -644,10 +664,7 @@
         </div>
     </div>
 
-    <!-- ── Right column: uitrusting + scorebord ── -->
-    <div class="right-col">
-
-        <div class="items-panel">
+    <div class="items-panel">
             <div class="panel-title">⚔️ Uitrusting</div>
 
             <div class="item-card" draggable="true" data-item="helm" data-zone="hoofd">
@@ -710,7 +727,6 @@
             </div>
         </div>
 
-    </div><!-- .right-col -->
 </div>
 
 <!-- ── Score bar ── -->
