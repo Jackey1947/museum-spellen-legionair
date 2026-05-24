@@ -485,6 +485,9 @@
             <div id="scoreboard-body">
                 <p class="sb-empty">Nog geen scores. Voltooi het spel!</p>
             </div>
+            <div style="text-align:center;margin-top:10px">
+                <button class="btn-secondary" onclick="clearScoreboard()">🗑️ Wis scorebord</button>
+            </div>
         </div>
 
     </div><!-- .right-col -->
@@ -669,6 +672,12 @@
     }
 
     // ── Scoreboard ──
+    function clearScoreboard() {
+        if (!confirm('Weet je zeker dat je het scorebord wil wissen?')) return;
+        localStorage.removeItem('legionair_scores');
+        renderScoreboard(-1);
+    }
+
     function loadScores() {
         try { return JSON.parse(localStorage.getItem('legionair_scores')) || []; }
         catch { return []; }
