@@ -170,6 +170,8 @@
 
         /* ── Items panel ── */
         .items-panel {
+            width: 200px;
+            flex-shrink: 0;
             background: rgba(0,0,0,0.25);
             border: 2px solid #DAA520;
             border-radius: 14px;
@@ -672,7 +674,7 @@
     <!-- ── Description panel ── -->
     <div class="description-panel" id="description-panel">
         <div class="panel-title">📜 Info</div>
-        <p class="desc-placeholder" id="desc-placeholder">Place the correct equipment to reveal its description.</p>
+        <p class="desc-placeholder" id="desc-placeholder">Drag each piece of equipment to the correct place on the legionary.</p>
     </div>
 
     <!-- ── Soldier panel ── -->
@@ -720,62 +722,49 @@
         </div>
     </div>
 
-    <div class="right-column">
-        <!-- ── Equipment panel ── -->
-        <div class="items-panel">
-            <div class="panel-title">⚔️ Equipment</div>
+    <!-- ── Equipment panel ── -->
+    <div class="items-panel">
+        <div class="panel-title">⚔️ Equipment</div>
 
-            <div class="item-card" draggable="true" data-item="helm" data-zone="hoofd">
-                <div class="item-top">
-                    <span class="item-icon">⛑️</span>
-                    <span class="item-name">Galea</span>
-                </div>
-            </div>
-
-            <div class="item-card" draggable="true" data-item="pantser" data-zone="romp">
-                <div class="item-top">
-                    <span class="item-icon">🪖</span>
-                    <span class="item-name">Lorica Segmentata</span>
-                </div>
-            </div>
-
-            <div class="item-card" draggable="true" data-item="schild" data-zone="linkerarm">
-                <div class="item-top">
-                    <span class="item-icon">🛡️</span>
-                    <span class="item-name">Scutum</span>
-                </div>
-            </div>
-
-            <div class="item-card" draggable="true" data-item="speer" data-zone="rechterhand">
-                <div class="item-top">
-                    <span class="item-icon">🗡️</span>
-                    <span class="item-name">Pilum</span>
-                </div>
-            </div>
-
-            <div class="item-card" draggable="true" data-item="zwaard" data-zone="heup">
-                <div class="item-top">
-                    <span class="item-icon">⚔️</span>
-                    <span class="item-name">Gladius</span>
-                </div>
-            </div>
-
-            <div class="item-card" draggable="true" data-item="sandalen" data-zone="voeten">
-                <div class="item-top">
-                    <span class="item-icon">👟</span>
-                    <span class="item-name">Caligae</span>
-                </div>
+        <div class="item-card" draggable="true" data-item="helm" data-zone="hoofd">
+            <div class="item-top">
+                <span class="item-icon">⛑️</span>
+                <span class="item-name">Galea</span>
             </div>
         </div>
 
-        <!-- ── Scoreboard ── -->
-        <div class="scoreboard-panel">
-            <div class="sb-title">🏆 Best Times</div>
-            <div id="scoreboard-body">
-                <p class="sb-empty">No scores yet. Complete the game!</p>
+        <div class="item-card" draggable="true" data-item="pantser" data-zone="romp">
+            <div class="item-top">
+                <span class="item-icon">🪖</span>
+                <span class="item-name">Lorica Segmentata</span>
             </div>
-            <div style="text-align:center;margin-top:10px">
-                <button class="btn-secondary" onclick="clearScoreboard()">🗑️ Clear scoreboard</button>
+        </div>
+
+        <div class="item-card" draggable="true" data-item="schild" data-zone="linkerarm">
+            <div class="item-top">
+                <span class="item-icon">🛡️</span>
+                <span class="item-name">Scutum</span>
+            </div>
+        </div>
+
+        <div class="item-card" draggable="true" data-item="speer" data-zone="rechterhand">
+            <div class="item-top">
+                <span class="item-icon">🗡️</span>
+                <span class="item-name">Pilum</span>
+            </div>
+        </div>
+
+        <div class="item-card" draggable="true" data-item="zwaard" data-zone="heup">
+            <div class="item-top">
+                <span class="item-icon">⚔️</span>
+                <span class="item-name">Gladius</span>
+            </div>
+        </div>
+
+        <div class="item-card" draggable="true" data-item="sandalen" data-zone="voeten">
+            <div class="item-top">
+                <span class="item-icon">👟</span>
+                <span class="item-name">Caligae</span>
             </div>
         </div>
     </div>
@@ -800,11 +789,9 @@
         <h2>🎉 Ave Romanus!</h2>
         <p>The legionary is fully equipped!</p>
         <div class="modal-time" id="modal-time">0:00</div>
-        <p>Enter your name for the scoreboard:</p>
-        <input type="text" id="player-name" maxlength="20" placeholder="Your name…" autocomplete="off">
         <div class="modal-btns">
-            <button class="btn" onclick="saveScore()">💾 Save</button>
-            <button class="btn-secondary" onclick="closeModal()">Skip</button>
+            <button class="btn" onclick="resetGame()">🔄 Play again</button>
+            <button class="btn-secondary" onclick="closeModal()">Close</button>
         </div>
     </div>
 </div>
@@ -817,7 +804,6 @@
     let timerInterval = null;
     let timerRunning = false;
     let lastFinishTime = 0;
-    let newScoreIndex = -1;
 
     const ZONE_META = {
         hoofd:       { label: 'Head'       },
@@ -956,75 +942,11 @@
     // ── Victory modal ──
     function showVictoryModal() {
         document.getElementById('modal-time').textContent = formatTime(lastFinishTime);
-        document.getElementById('player-name').value = '';
         document.getElementById('modal').classList.add('open');
-        document.getElementById('player-name').focus();
     }
-
-    document.getElementById('player-name').addEventListener('keydown', e => {
-        if (e.key === 'Enter') saveScore();
-    });
 
     function closeModal() {
         document.getElementById('modal').classList.remove('open');
-        renderScoreboard(-1);
-    }
-
-    function saveScore() {
-        const name = document.getElementById('player-name').value.trim() || 'Anonymous';
-        const scores = loadScores();
-        scores.push({ name, time: lastFinishTime, date: new Date().toLocaleDateString('en-GB') });
-        scores.sort((a, b) => a.time - b.time);
-        if (scores.length > 10) scores.length = 10;
-        newScoreIndex = scores.findIndex(s => s.time === lastFinishTime && s.name === name);
-        localStorage.setItem('legionair_scores_en', JSON.stringify(scores));
-        document.getElementById('modal').classList.remove('open');
-        renderScoreboard(newScoreIndex);
-    }
-
-    // ── Scoreboard ──
-    function clearScoreboard() {
-        if (!confirm('Are you sure you want to clear the scoreboard?')) return;
-        localStorage.removeItem('legionair_scores_en');
-        renderScoreboard(-1);
-    }
-
-    function loadScores() {
-        try { return JSON.parse(localStorage.getItem('legionair_scores_en')) || []; }
-        catch { return []; }
-    }
-
-    function renderScoreboard(highlightIdx) {
-        const scores = loadScores();
-        const body = document.getElementById('scoreboard-body');
-
-        if (scores.length === 0) {
-            body.innerHTML = '<p class="sb-empty">No scores yet. Complete the game!</p>';
-            return;
-        }
-
-        const medals = ['🥇', '🥈', '🥉'];
-        const rows = scores.map((s, i) => {
-            const medal = medals[i] || (i + 1) + '.';
-            const cls   = i === highlightIdx ? ' class="sb-new"' : '';
-            return `<tr${cls}>
-                <td class="sb-rank">${medal}</td>
-                <td>${escHtml(s.name)}</td>
-                <td class="sb-time">${formatTime(s.time)}</td>
-                <td style="font-size:0.75em;color:#9A7A3A">${s.date}</td>
-            </tr>`;
-        }).join('');
-
-        body.innerHTML = `<table class="sb-table">
-            <thead><tr>
-                <th>#</th><th>Name</th><th style="text-align:right">Time</th><th>Date</th>
-            </tr></thead>
-            <tbody>${rows}</tbody>
-        </table>`;
-    }
-
-    function escHtml(s) {
-        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     // ── Reset ──
@@ -1101,8 +1023,6 @@
         document.getElementById('start-overlay').classList.add('hidden');
     }
 
-    // ── Init ──
-    renderScoreboard(-1);
 </script>
 </body>
 </html>
