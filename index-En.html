@@ -170,15 +170,13 @@
 
         /* ── Items panel ── */
         .items-panel {
-            width: 230px;
-            flex-shrink: 0;
             background: rgba(0,0,0,0.25);
             border: 2px solid #DAA520;
             border-radius: 14px;
-            padding: 16px;
-            overflow-y: auto;
+            padding: 12px;
             display: flex;
             flex-direction: column;
+            gap: 6px;
         }
 
         .item-card {
@@ -262,6 +260,57 @@
         .sb-medal-1 { color: #FFD700; }
         .sb-medal-2 { color: #C0C0C0; }
         .sb-medal-3 { color: #CD7F32; }
+
+        /* ── Right column wrapper ── */
+        .right-column {
+            width: 200px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* ── Description panel ── */
+        .description-panel {
+            width: 240px;
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.25);
+            border: 2px solid #DAA520;
+            border-radius: 14px;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .desc-placeholder {
+            color: #9A7A3A;
+            font-size: 0.85em;
+            text-align: center;
+            padding: 16px 0;
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        .desc-entry {
+            background: rgba(34,139,34,0.12);
+            border: 1px solid rgba(76,175,80,0.35);
+            border-radius: 8px;
+            padding: 9px 11px;
+            animation: popIn 0.3s ease;
+        }
+
+        .desc-entry-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 5px;
+        }
+
+        .desc-entry-icon { font-size: 1.2em; }
+        .desc-entry-name { font-weight: bold; color: #90EE90; font-size: 0.9em; }
+        .desc-entry-text { color: #E8D5B0; font-size: 0.78em; line-height: 1.4; }
 
         /* ── Score bar ── */
         .score-bar {
@@ -540,10 +589,11 @@
         @media (max-width: 900px) {
             body { height: auto; overflow: auto; }
             .game-container { flex-wrap: wrap; align-items: flex-start; flex: none; }
-            .soldier-panel  { width: 100%; flex: none; min-height: 400px; }
-            .items-panel    { width: 100%; flex: none; overflow-y: visible; }
+            .soldier-panel    { width: 100%; flex: none; min-height: 400px; }
+            .description-panel { width: 100%; flex: none; }
+            .right-column     { width: 100%; flex: none; }
             .scoreboard-panel { width: 100%; flex: none; }
-            .score-bar      { flex-direction: column; gap: 8px; }
+            .score-bar        { flex-direction: column; gap: 8px; }
             .score-bar-left, .score-bar-right { align-items: center; }
         }
     </style>
@@ -619,6 +669,12 @@
 
 <div class="game-container">
 
+    <!-- ── Description panel ── -->
+    <div class="description-panel" id="description-panel">
+        <div class="panel-title">📜 Info</div>
+        <p class="desc-placeholder" id="desc-placeholder">Place the correct equipment to reveal its description.</p>
+    </div>
+
     <!-- ── Soldier panel ── -->
     <div class="soldier-panel">
         <div class="panel-title">🏛️ Romanus Miles – The Roman Soldier</div>
@@ -664,67 +720,63 @@
         </div>
     </div>
 
-    <!-- ── Equipment panel ── -->
-    <div class="items-panel">
-        <div class="panel-title">⚔️ Equipment</div>
+    <div class="right-column">
+        <!-- ── Equipment panel ── -->
+        <div class="items-panel">
+            <div class="panel-title">⚔️ Equipment</div>
 
-        <div class="item-card" draggable="true" data-item="helm" data-zone="hoofd">
-            <div class="item-top">
-                <span class="item-icon">⛑️</span>
-                <div><div class="item-name">Galea</div></div>
+            <div class="item-card" draggable="true" data-item="helm" data-zone="hoofd">
+                <div class="item-top">
+                    <span class="item-icon">⛑️</span>
+                    <span class="item-name">Galea</span>
+                </div>
             </div>
-            <p class="item-desc">This piece of metal armour had cheek guards and a neck protector. An impressive crest made the legionary look taller and more fearsome on the battlefield.</p>
-        </div>
 
-        <div class="item-card" draggable="true" data-item="pantser" data-zone="romp">
-            <div class="item-top">
-                <span class="item-icon">🪖</span>
-                <div><div class="item-name">Lorica Segmentata</div></div>
+            <div class="item-card" draggable="true" data-item="pantser" data-zone="romp">
+                <div class="item-top">
+                    <span class="item-icon">🪖</span>
+                    <span class="item-name">Lorica Segmentata</span>
+                </div>
             </div>
-            <p class="item-desc">Made of horizontal metal strips fastened with leather straps, this armour was light enough to move in yet strong enough to stop a sword blow.</p>
-        </div>
 
-        <div class="item-card" draggable="true" data-item="schild" data-zone="linkerarm">
-            <div class="item-top">
-                <span class="item-icon">🛡️</span>
-                <div><div class="item-name">Scutum</div></div>
+            <div class="item-card" draggable="true" data-item="schild" data-zone="linkerarm">
+                <div class="item-top">
+                    <span class="item-icon">🛡️</span>
+                    <span class="item-name">Scutum</span>
+                </div>
             </div>
-            <p class="item-desc">This large, curved shield of wood and leather weighed over five kilograms. In formation, legionaries locked them together to form an impenetrable wall – the famous testudo.</p>
-        </div>
 
-        <div class="item-card" draggable="true" data-item="speer" data-zone="rechterhand">
-            <div class="item-top">
-                <span class="item-icon">🗡️</span>
-                <div><div class="item-name">Pilum</div></div>
+            <div class="item-card" draggable="true" data-item="speer" data-zone="rechterhand">
+                <div class="item-top">
+                    <span class="item-icon">🗡️</span>
+                    <span class="item-name">Pilum</span>
+                </div>
             </div>
-            <p class="item-desc">This weapon had a long, thin iron shank that bent on impact – preventing the enemy from throwing it back and making his shield unusable.</p>
-        </div>
 
-        <div class="item-card" draggable="true" data-item="zwaard" data-zone="heup">
-            <div class="item-top">
-                <span class="item-icon">⚔️</span>
-                <div><div class="item-name">Gladius</div></div>
+            <div class="item-card" draggable="true" data-item="zwaard" data-zone="heup">
+                <div class="item-top">
+                    <span class="item-icon">⚔️</span>
+                    <span class="item-name">Gladius</span>
+                </div>
             </div>
-            <p class="item-desc">This short, double-edged weapon was ideal for close combat. The legionary reached for it after he had already thrown his other weapon.</p>
-        </div>
 
-        <div class="item-card" draggable="true" data-item="sandalen" data-zone="voeten">
-            <div class="item-top">
-                <span class="item-icon">👟</span>
-                <div><div class="item-name">Caligae</div></div>
+            <div class="item-card" draggable="true" data-item="sandalen" data-zone="voeten">
+                <div class="item-top">
+                    <span class="item-icon">👟</span>
+                    <span class="item-name">Caligae</span>
+                </div>
             </div>
-            <p class="item-desc">These open, hobnailed shoes with thick soles were so durable that a legionary could cover dozens of kilometres a day in them without wearing them out.</p>
         </div>
-    </div>
 
-    <!-- ── Scoreboard ── -->
-    <div class="scoreboard-panel">
-        <div class="sb-title">🏆 Best Times</div>
-        <div id="scoreboard-body">
-            <p class="sb-empty">No scores yet. Complete the game!</p>
-        </div>
-        <div style="text-align:center;margin-top:10px">
-            <button class="btn-secondary" onclick="clearScoreboard()">🗑️ Clear scoreboard</button>
+        <!-- ── Scoreboard ── -->
+        <div class="scoreboard-panel">
+            <div class="sb-title">🏆 Best Times</div>
+            <div id="scoreboard-body">
+                <p class="sb-empty">No scores yet. Complete the game!</p>
+            </div>
+            <div style="text-align:center;margin-top:10px">
+                <button class="btn-secondary" onclick="clearScoreboard()">🗑️ Clear scoreboard</button>
+            </div>
         </div>
     </div>
 
@@ -774,6 +826,15 @@
         rechterhand: { label: 'Right hand' },
         heup:        { label: 'Hip'        },
         voeten:      { label: 'Feet'       },
+    };
+
+    const ITEM_DESC = {
+        helm:     { icon: '⛑️',  text: 'This piece of metal armour had cheek guards and a neck protector. An impressive crest made the legionary look taller and more fearsome on the battlefield.' },
+        pantser:  { icon: '🪖',  text: 'Made of horizontal metal strips fastened with leather straps, this armour was light enough to move in yet strong enough to stop a sword blow.' },
+        schild:   { icon: '🛡️',  text: 'This large, curved shield of wood and leather weighed over five kilograms. In formation, legionaries locked them together to form an impenetrable wall – the famous testudo.' },
+        speer:    { icon: '🗡️',  text: 'This weapon had a long, thin iron shank that bent on impact – preventing the enemy from throwing it back and making his shield unusable.' },
+        zwaard:   { icon: '⚔️',  text: 'This short, double-edged weapon was ideal for close combat. The legionary reached for it after he had already thrown his other weapon.' },
+        sandalen: { icon: '👟',  text: 'These open, hobnailed shoes with thick soles were so durable that a legionary could cover dozens of kilometres a day in them without wearing them out.' },
     };
 
     const CORRECT_MSG = ['Correct! Well done! ✅', 'Excellent! ✅', 'That\'s right! ✅', 'Good work, soldier! ✅'];
@@ -849,9 +910,25 @@
             placed[targetZone] = true;
             zoneEl.classList.add('correct');
             zoneEl.innerHTML =
-                `<span style="font-size:1.6em;line-height:1">${icon}</span>` +
+                `<span style="font-size:1.6em;line-height:1">✅</span>` +
                 `<span class="zone-label" style="color:#90EE90">${name}</span>`;
             card.classList.add('placed');
+
+            const meta = ITEM_DESC[itemId];
+            if (meta) {
+                const placeholder = document.getElementById('desc-placeholder');
+                if (placeholder) placeholder.remove();
+                const entry = document.createElement('div');
+                entry.className = 'desc-entry';
+                entry.innerHTML =
+                    `<div class="desc-entry-header">` +
+                    `<span class="desc-entry-icon">${meta.icon}</span>` +
+                    `<span class="desc-entry-name">${name}</span>` +
+                    `</div>` +
+                    `<p class="desc-entry-text">${meta.text}</p>`;
+                document.getElementById('description-panel').appendChild(entry);
+            }
+
             score++;
             document.getElementById('score').textContent = score;
 
@@ -959,6 +1036,9 @@
         document.getElementById('feedback').className = '';
         document.getElementById('feedback').textContent = 'Drag an item onto the soldier! 👇';
         document.getElementById('modal').classList.remove('open');
+        document.getElementById('description-panel').innerHTML =
+            '<div class="panel-title">📜 Info</div>' +
+            '<p class="desc-placeholder" id="desc-placeholder">Place the correct equipment to reveal its description.</p>';
 
         document.querySelectorAll('.drop-zone').forEach(z => {
             z.className = 'drop-zone overlay-dz';
