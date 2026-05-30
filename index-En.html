@@ -908,7 +908,9 @@
                     `<span class="desc-entry-name">${name}</span>` +
                     `</div>` +
                     `<p class="desc-entry-text">${meta.text}</p>`;
-                document.getElementById('description-panel').appendChild(entry);
+                const descPanel = document.getElementById('description-panel');
+                descPanel.appendChild(entry);
+                descPanel.scrollTop = descPanel.scrollHeight;
             }
 
             score++;
@@ -964,6 +966,7 @@
         });
 
         document.querySelectorAll('.item-card').forEach(c => c.classList.remove('placed', 'dragging'));
+        shuffleItems();
     }
 
     // ── Touch support ──
@@ -1014,9 +1017,21 @@
         touchGhost = null; touchCard = null;
     }
 
+    // ── Shuffle items ──
+    function shuffleItems() {
+        const panel = document.querySelector('.items-panel');
+        const cards = [...panel.querySelectorAll('.item-card')];
+        for (let i = cards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [cards[i], cards[j]] = [cards[j], cards[i]];
+        }
+        cards.forEach(c => panel.appendChild(c));
+    }
+
     // ── Start screen ──
     function startGame() {
         document.getElementById('start-overlay').classList.add('hidden');
+        shuffleItems();
     }
 
 </script>
