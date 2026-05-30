@@ -843,7 +843,6 @@
 
         const card  = document.querySelector(`[data-item="${itemId}"]`);
         const name  = card.querySelector('.item-name').textContent;
-        const latin = card.querySelector('.item-latin').textContent;
         const icon  = card.querySelector('.item-icon').textContent;
         const label = ZONE_META[targetZone].label;
 
@@ -851,8 +850,8 @@
             placed[targetZone] = true;
             zoneEl.classList.add('correct');
             zoneEl.innerHTML =
-                `<span style="font-size:1.6em;line-height:1">${icon}</span>` +
-                `<span class="zone-label" style="color:#90EE90">${latin}</span>`;
+                `<span style="font-size:1.6em;line-height:1">✅</span>` +
+                `<span class="zone-label" style="color:#90EE90">${name}</span>`;
             card.classList.add('placed');
             score++;
             document.getElementById('score').textContent = score;
