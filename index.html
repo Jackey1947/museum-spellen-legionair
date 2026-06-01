@@ -113,8 +113,8 @@
             aspect-ratio: 1;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(218,165,32,0.18);
-            border: 2px solid rgba(218,165,32,0.65);
+            background: rgba(0, 210, 255, 0.22);
+            border: 2px solid rgba(0, 210, 255, 0.85);
             animation: zone-pulse 2s ease-out infinite;
             transition: background 0.2s, border-color 0.2s;
         }
@@ -128,8 +128,8 @@
         .drop-zone.overlay-dz:nth-child(7) { animation-delay: 1.66s;  }
 
         .drop-zone.overlay-dz.drag-over {
-            background: rgba(218,165,32,0.42);
-            border-color: #FFD700;
+            background: rgba(0, 210, 255, 0.45);
+            border-color: rgba(0, 210, 255, 1);
             transform: translate(-50%, -50%) scale(1.18);
             animation: zone-pulse-fast 0.5s ease-out infinite;
         }
@@ -327,8 +327,7 @@
             flex-wrap: wrap;
         }
 
-        .score-bar-left  { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-        .score-bar-right { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+        .score-bar-center { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 
         #feedback {
             font-size: 1.05em;
@@ -424,15 +423,15 @@
 
         /* ── Animaties ── */
         @keyframes zone-pulse {
-            0%   { box-shadow: 0 0 0 0   rgba(218,165,32,0.7); }
-            70%  { box-shadow: 0 0 0 14px rgba(218,165,32,0);   }
-            100% { box-shadow: 0 0 0 0   rgba(218,165,32,0);   }
+            0%   { box-shadow: 0 0 0 0   rgba(0,210,255,0.8); }
+            70%  { box-shadow: 0 0 0 14px rgba(0,210,255,0);   }
+            100% { box-shadow: 0 0 0 0   rgba(0,210,255,0);   }
         }
 
         @keyframes zone-pulse-fast {
-            0%   { box-shadow: 0 0 0 0   rgba(255,215,0,0.9); }
-            70%  { box-shadow: 0 0 0 20px rgba(255,215,0,0);   }
-            100% { box-shadow: 0 0 0 0   rgba(255,215,0,0);   }
+            0%   { box-shadow: 0 0 0 0   rgba(0,210,255,1); }
+            70%  { box-shadow: 0 0 0 20px rgba(0,210,255,0); }
+            100% { box-shadow: 0 0 0 0   rgba(0,210,255,0); }
         }
 
         @keyframes zone-correct {
@@ -596,7 +595,6 @@
             .right-column     { width: 100%; flex: none; }
             .scoreboard-panel { width: 100%; flex: none; }
             .score-bar        { flex-direction: column; gap: 8px; }
-            .score-bar-left, .score-bar-right { align-items: center; }
         }
     </style>
 </head>
@@ -768,14 +766,12 @@
 
 <!-- ── Score bar ── -->
 <div class="score-bar">
-    <div class="score-bar-left">
+    <div id="feedback">Sleep een voorwerp naar de soldaat!</div>
+    <div class="score-bar-center">
         <div class="score-line">Score: <span id="score">0</span> / 6</div>
         <div class="timer-line">⏱ <span id="timer">0:00</span></div>
     </div>
-    <div id="feedback">Sleep een voorwerp naar de soldaat! 👇</div>
-    <div class="score-bar-right">
-        <button class="btn" onclick="resetGame()">🔄 Opnieuw spelen</button>
-    </div>
+    <button class="btn" onclick="resetGame()">🔄 Opnieuw spelen</button>
 </div>
 
 
@@ -955,7 +951,7 @@
         resetTimer();
         document.getElementById('score').textContent = '0';
         document.getElementById('feedback').className = '';
-        document.getElementById('feedback').textContent = 'Sleep een voorwerp naar de soldaat! 👇';
+        document.getElementById('feedback').textContent = 'Sleep een voorwerp naar de soldaat!';
         document.getElementById('modal').classList.remove('open');
         document.getElementById('description-panel').innerHTML =
             '<div class="panel-title">📜 Uitleg</div>' +
